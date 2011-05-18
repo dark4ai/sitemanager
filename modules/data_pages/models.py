@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import uuid
 from datetime import datetime
 from django.db import models
 from easy_thumbnails.fields import ThumbnailerImageField
