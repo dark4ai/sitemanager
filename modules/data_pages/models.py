@@ -4,7 +4,11 @@ from django.db import models
 from easy_thumbnails.fields import ThumbnailerImageField
 
 def upload_path(instance, filename):
-    return u"images/models/datapages/%d" % instance.pk
+    if instance.pk:
+        id = str(instance.pk)
+    else:
+        id = str(uuid.uuid4()).replace('-', '')
+    return u"images/models/datapages/%s" % id
 
 class DataPage(models.Model):
     title = models.TextField()
