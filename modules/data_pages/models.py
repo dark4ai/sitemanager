@@ -3,6 +3,9 @@ from datetime import datetime
 from django.db import models
 from easy_thumbnails.fields import ThumbnailerImageField
 
+def upload_path(instance, filename):
+    return u"images/models/datapages/%d.jpg" % instance.pk
+
 class DataPage(models.Model):
     title = models.TextField()
     preview = models.TextField(blank=True)
@@ -12,7 +15,7 @@ class DataPage(models.Model):
     is_public = models.BooleanField(default=True)
     image = ThumbnailerImageField(
             blank=True,
-            upload_to='pages',
+            upload_to=upload_path,
             resize_source=dict(size=(640, 640))
     )
 
