@@ -1,0 +1,26 @@
+{% extends "cms/base.html" %}
+{% block title %}Авторизация{% endblock %}
+{% block extrahead %}
+<link rel="stylesheet" href="{% load managermedia %}{% manager_media_prefix %}css/login.css">  
+{% endblock %}
+{% block extrabody %}
+    <div class="login">
+        <div></div>
+        <div class="backing">
+            <form action="{{ app_path }}" method="post">{% csrf_token %}
+                <div class="login_error">{{error_message}}</div>
+                <div class="form_line">
+                    <label for="username">Логин</label><input type="text" id="username" name="username">
+                </div>
+                <div class="form_line">
+                    <label for="password">Пароль</label><input type="password" id="password" name="password">
+                    <input type="hidden" name="this_is_the_login_form" value="1">
+                </div>
+                <div class="submit_line">
+                    <label for="submit"></label><input type="submit" value="Войти" id="submit">
+                </div>
+                <div class="clear"></div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

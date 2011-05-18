@@ -1,0 +1,25 @@
+{% extends "cms/index.html" %}
+{% block title %}Редактирование страницы &laquo;{{ page }}&raquo;{% endblock %}
+{% block extrahead %}
+    <script src="{% load managermedia %}{% manager_media_prefix %}js/jquery-1.5.1.min.js"></script>
+    <script src="{% manager_media_prefix %}js/editor/editor.js"></script>
+    <link rel="stylesheet" href="{% manager_media_prefix %}js/editor/css/editor.css">
+    <script type="text/javascript">
+        $(document).ready(
+            function()
+            {
+                $('#editor_content').editor({ focus: true, toolbar: 'admin', image_upload: '/admin/upload/image/'});
+            }
+        );
+    </script>
+{% endblock %}
+{% block navigate_panel %}<div class="navigate_panel"><a href="/admin/">Главная</a> &rarr; {{ page }}</div>{% endblock %}
+{% block form %}
+<div class="title_panel">{{ page }}</div>
+<form method="post" action="/admin/dynamic_pages/save/">
+    {% csrf_token %}
+    <input type="hidden" name="urlname" value="{{ urlname }}">
+    <textarea id="editor_content" name="content" style="width:100%; height:520px;">{{ content }}</textarea>
+    <input class="save_button" type="submit" value="Сохранить" style="margin: 15px 10px 0 0;">
+</form>
+{% endblock %}

@@ -1,0 +1,35 @@
+body
+{
+    font-size: 16px;
+    font-family: "Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
+    color: black;
+}
+html, body
+{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    min-height: 100%;
+}
+#menu a, #menu a:visited, #head a, #head a:visited
+{
+    color: black;
+}
+#menu a:hover, #head a:hover
+{
+	color: black !important;
+}
+.clear
+{
+    clear: both;
+}
+input
+{
+    margin: 2px 0;
+    padding: 2px 3px;
+}
+input[type=text], input[type=password]
+{
+    border: 1px solid #CCC;
+    /*width: 10em;*/
+}

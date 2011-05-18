@@ -1,0 +1,105 @@
+{% extends "cms/index.html" %}
+{% block title %}{{ pages_forms.1|title }}{% endblock %}
+{% block extrahead %}
+    <script src="{% load managermedia %}{% manager_media_prefix %}js/jquery-1.5.1.min.js"></script>
+    <script type="text/javascript">
+		function next_negative(tr)
+		{
+			tr.nextAll().each(function()
+					{
+						if($(this).hasClass('odd'))
+							$(this).attr("class", "even");
+						else if($(this).hasClass('even'))
+							$(this).attr("class", "odd");
+					});
+		}
+		function delete_page()
+		{
+			id = $(this).attr('id').substr(6);
+			tr = $(this).parent().parent();
+			$.get("../../delete_page/"+id+"/", function(data)
+			{
+				if(data == "bad")
+				{
+					alert("Не удалось удалить элемент. Обновите страницу.");
+				}
+				else
+				{
+					$(".total_panel").html(data);
+					if(tr.parent().children('tr').length == 2)
+						$("#empty_list").show();
+					next_negative(tr);
+					tr.remove();				
+				}
+			});
+		}
+        $(document).ready(
+            function()
+            {
+                $('.delete_page').bind('click', delete_page);
+//                $('#page_table tbody tr').bind('click', next_negative);
+            }
+        );
+    </script>
+{% endblock %}
+{% block navigate_panel %}<div class="navigate_panel"><a href="/admin/">Главная</a> &rarr; {{ pages_forms.1|title }}</div>{% endblock %}
+{% block form %}
+	{% load numerals %}
+	<div class="button_panel">
+		<div class="action_descript">Выберите {{ pages_forms.0 }} для изменения</div>
+		<a href="../page/" class="add_page">Добавить {{ pages_forms.0 }}</a>
+	</div>
+		<table class="w100">
+			<thead>
+				<tr>
+					<td style="width: 3em;">ID</td>
+					<td>Заголовок</td>
+					<td style="width: 10em;">Дата</td>
+					<td style="width: 10em;">Статус</td>
+					<td style="width: 10em;">Действия</td>
+				</tr>
+			</thead>
+			<tbody>
+				{% for page in pages %}
+					<tr class="{% cycle 'odd' 'even'%}">
+						<td>{{ page.id }}</td>
+						<td>{{ page.title }}</td>
+						<td>{{ page.date|date:"j F Y" }}</td>
+						{% if page.is_public %}
+							<td class="green">Опубликовано</td>
+						{% else %}
+							<td class="red">Неопубликовано</td>
+						{% endif %}
+						<td><a href="../page/{{ page.id }}/">Изменить</a>&nbsp;&nbsp;<a class="delete_page" href="#delete" id="delete{{ page.id }}">Удалить</a></td>
+					</tr>
+				{% endfor %}
+				<tr>
+					<td colspan="5" id="empty_list" class="big tacenter" style="padding: 3em;{% if pages %}display: none;{% endif %}">Список пуст</td>
+				</tr>
+				<!--<tr class="odd">
+					<td>1</td>
+					<td>Новое событие потрясло мир</td>
+					<td>4 апреля 2011</td>
+					<td class="green">Опубликовано</td>
+					<td><a href="#">Удалить</a></td>
+				</tr>
+				<tr class="even">
+					<td>2</td>
+					<td>Британские ученые сделали заявление</td>
+					<td>20 апреля 2011</td>
+					<td class="green">Опубликовано</td>
+					<td><a href="#">Удалить</a></td>
+				</tr>
+				<tr class="odd">
+					<td>3</td>
+					<td>День весны и труда</td>
+					<td>1 мая 2011</td>
+					<td class="red">Неопубликовано</td>
+					<td><a href="#">Удалить</a></td>
+				</tr>!-->
+			</tbody>
+		</table>
+		<div class="total_panel">
+			{% numerals pages_len pages_nforms %}
+		</div>
+{% endblock %}

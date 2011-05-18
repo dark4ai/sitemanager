@@ -1,0 +1,38 @@
+{% extends "cms/index.html" %}
+{% block title %}Техническая поддержка{% endblock %}
+{% block form %}
+<div class="title_panel">Техническая поддержка</div>
+<p style="margin-top: 0;">Если у вас возникли какие-то технические проблемы свяжитесь с нами и мы поможем.</p>
+<ul style="line-height: 1.5em;">
+    <li>Телефон &mdash; +7 (922) 898-42-89</li>
+    <li>Email &mdash; <a href="mailto:dark4ai@gmail.com">dark4ai@gmail.com</a></li>
+    <li>ICQ &mdash; 469376391</li>
+    <li>Skype &mdash; <a href="skype:dark-ai-">dark-ai-</a></li>
+    <li>Jabber &mdash; dark_ai@jabber.ru</li>
+</ul>
+<p>Можно прямо сейчас что-то предложить или пожаловаться.</p>
+{% if form_status %}
+    <p class="green">Форма успешно отправлена, можно отправить <a href="/admin/support/">еще одну</a>.</p>
+{% else %}
+<fieldset>
+            <legend>Форма</legend>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    <table class="simple">
+        <tr>
+            <td class="vatop">Имя</td>
+            <td class="vatop">{{ form.name }}<div class="error">{{ form.name.errors }}</div></td>
+        </tr>
+        <tr>
+            <td class="vatop">Сообщение</td>
+            <td class="vatop">{{ form.message }}<div class="error">{{ form.message.errors }}</div></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" style="float:right;"></td>
+        </tr>
+    </table>
+</form>
+</fieldset>
+{% endif %}
+{% endblock %}

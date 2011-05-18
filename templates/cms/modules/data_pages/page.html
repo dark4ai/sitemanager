@@ -1,0 +1,70 @@
+{% extends "cms/index.html" %}
+{% load numerals %}
+{% block title %}{% if title %}Редактирование {{ pages_nforms.1 }} &laquo;{{ title }}&raquo;{% else %}Добавление {{ pages_nforms.1 }}{% endif %}{% endblock %}
+{% block extrahead %}
+    <script src="{% load managermedia %}{% manager_media_prefix %}js/jquery-1.5.1.min.js"></script>
+    <script src="{% manager_media_prefix %}js/jquery-ui-1.8.12.custom.min.js"></script>
+    <script src="{% manager_media_prefix %}js/i18n/jquery.ui.datepicker-ru.js"></script>
+    <script src="{% manager_media_prefix %}js/editor/editor.js"></script>
+    <link rel="stylesheet" href="{% manager_media_prefix %}css/custom-theme/jqueryui.css">
+    <link rel="stylesheet" href="{% manager_media_prefix %}js/editor/css/editor.css">
+    <script type="text/javascript">
+        $(document).ready(
+            function()
+            {
+                $('#editor_content').editor({ focus: true, toolbar: 'admin', image_upload: '/admin/upload/image/'});
+
+                $.datepicker.setDefaults( $.datepicker.regional[ "ru" ] );
+                $("#id_date").datepicker({
+                    dateFormat: "dd.mm.yy",
+                    firstDay: 1,
+                    showOn: "button",
+                    buttonImage: "{% manager_media_prefix %}images/date.png",
+                    buttonImageOnly: true
+                });
+            }
+        );
+    </script>
+{% endblock %}
+{% block navigate_panel %}<div class="navigate_panel"><a href="/admin/">Главная</a> &rarr; <a href="{% if title %}../{% endif %}../pages/">{{ pages_forms.1|title }}</a> &rarr; {% if title %}Редактирование {{ pages_nforms.1 }} &laquo;{{ title }}&raquo;{% else %}Добавление {{ pages_nforms.1 }}{% endif %}</div>{% endblock %}
+{% block form %}
+    <div class="title_panel">{% if title %}Редактирование {{ pages_nforms.1 }} &laquo;{{ title }}&raquo;{% else %}Добавление {{ pages_nforms.1 }}{% endif %}</div>
+    <form enctype="multipart/form-data" method="post" action="">
+        {% csrf_token %}
+        {{ pform.pageset }}
+        <fieldset>
+            <legend>Представление</legend>
+            <table class="simple">
+                <tr>
+                    <td class="vatop"><label for="id_title">Заголовок</label></td>
+                    <td>{{ pform.title }} <div class="error">{{ pform.title.errors }}</div></td>
+                </tr>
+                <tr>
+                    <td class="vatop"><label for="id_date">Дата публикации</label></td>
+                    <td>{{ pform.date }} <div class="error">{{ pform.date.errors }}</div></td>
+                </tr>
+                <tr>
+                    <td class="vatop"><label for="id_image">Картинка</label></td>
+                    <td>{{ pform.image }} {% load thumbnail %}{% if img %}<div class="exists_image"><img src="{% thumbnail img 200x200 %}" alt=""></div>{% endif %}<div class="error">{{ pform.image.errors }}</div></td>
+                </tr>
+                <tr>
+                    <td class="vatop"><label for="id_preview">Аннотация</label></td>
+                    <td>{{ pform.preview }} <div class="error">{{ pform.preview.errors }}</div></td>
+                </tr>
+                <tr>
+                    <td class="vatop"><label for="id_is_public">Опубликовано</label></td>
+                    <td>{{ pform.is_public }}</td>
+                </tr>
+            </table>
+        </fieldset>
+        <fieldset>
+            <legend>Содержание</legend>
+            <table class="simple w100">
+                <tr>
+                    <td>{{ pform.content }}</td>
+                </tr>
+            </table>
+        </fieldset>
+        <input class="save_button" type="submit" value="Сохранить" style="margin: 15px 10px 0 0;">
+    </form>
+{% endblock %}

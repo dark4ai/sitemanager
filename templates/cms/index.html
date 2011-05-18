@@ -1,0 +1,28 @@
+{% extends "cms/base.html" %}
+{% block title %}Главная{% endblock %}
+{% block extrabody %}
+        <div id="page">
+            <div id="head">
+                <a id="quit" href="/admin/logout/">Выйти</a>
+                <div id="site_name">Администрирование сайта <a href="{{ SITE_ADRESS }}">{{ SITE_NAME|safe }}</a></div>
+            </div>
+            <div id="controlpanel"></div>
+            {% block navigate_panel %}<div class="navigate_panel">&nbsp;</div>{% endblock %}
+            <div id="menu">
+                {% for menu in manager_menu %}
+                <div{% if menu.ID == current_menu %} class="current"{% endif %}><a class="menu_{{menu.ID}}" href="{{ menu.Href }}">{{ menu.Label }}</a></div>
+                    {% if menu.data %}
+                    <div class="submenu">
+                        {% for submenu in menu.data %}
+                        <div{% if submenu.ID == current_menu %} class="current"{% endif %} href="{{ submenu.Href }}">{{ submenu.Label }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div id="form">
+                {% block form %}{% endblock %}
+            </div>
+            <div style="clear:both; height: 50px;"></div>
+        </div>
+{% endblock %}%
