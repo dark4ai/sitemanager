@@ -9,7 +9,7 @@ def upload_path(instance, filename):
         id = str(instance.pk)
     else:
         id = str(uuid.uuid4()).replace('-', '')
-    return u"images/models/datapages/%s" % id
+    return u"images/models/datapages/%s.jpg" % id
 
 class DataPage(models.Model):
     title = models.TextField()
