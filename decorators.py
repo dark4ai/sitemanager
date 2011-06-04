@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.core.mail import mail_admins
+from django.conf import settings
 from django.utils.translation import ugettext as _
 import sys
 import sitemanager.menus
@@ -44,8 +45,11 @@ def json_view(func):
                 msg = e.message
             else:
                 msg = _('Internal error')+': '+str(e)
-            response = {'result': 'error',
-                        'text': msg}
+            if settings.DEBUG:
+                response = {'result': 'error',
+                            'text': msg}
+            else:
+                response = {'result': 'error'}
 
         json = simplejson.dumps(response, ensure_ascii=False)
         return HttpResponse(json, mimetype='application/json')

@@ -253,3 +253,7 @@ input[type="submit"], input[type="button"]  { padding: .1em .2em; }
 .vabottom { vertical-align: bottom !important; }
 .vamiddle { vertical-align: middle !important; }
 .vamiddle img { vertical-align: middle !important; }
+
+/* LINKS
+---------------------------------------------------- */
+a.static { text-decoration: none; border-bottom: 1px dashed #335d87; }
