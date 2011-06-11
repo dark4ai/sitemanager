@@ -94,6 +94,15 @@
 {
     background: url(../images/bug_negative.png) no-repeat left top;
 }
+#menu div a.menu_statistics
+{
+    background: url(../images/statistics.png) no-repeat left top;
+    padding: 0 0 0 22px;
+}
+#menu div.current a.menu_statistics
+{
+    background: url(../images/statistics_negative.png) no-repeat left top;
+}
 #menu, #form
 {
     padding-top: 1em;

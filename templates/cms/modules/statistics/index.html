@@ -1,0 +1,163 @@
+{% extends "cms/index.html" %}
+{% block title %}Статистика от Яндекса{% endblock %}
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% load managermedia %}{% manager_media_prefix %}js/jqplot/jquery.jqplot.min.css" />
+    <!--[if lt IE 9]><script language="javascript" type="text/javascript" src="{% manager_media_prefix %}js/jqplot/excanvas.min.js"></script><![endif]-->
+    <script language="javascript" type="text/javascript" src="{% manager_media_prefix %}js/jquery-1.5.1.min.js"></script>
+    <script language="javascript" type="text/javascript" src="{% manager_media_prefix %}js/jqplot/jquery.jqplot.min.js"></script>
+    <script type="text/javascript" src="{% manager_media_prefix %}/js/jqplot/plugins/jqplot.highlighter.js"></script>
+    <script type="text/javascript" src="{% manager_media_prefix %}/js/jqplot/plugins/jqplot.cursor.min.js"></script>
+    <script type="text/javascript" src="{% manager_media_prefix %}/js/jqplot/plugins/jqplot.dateAxisRenderer.js"></script>
+    <script type="text/javascript" src="{% manager_media_prefix %}/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
+    <script type="text/javascript" src="{% manager_media_prefix %}/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+    <script type="text/javascript" src="{% manager_media_prefix %}/js/jqplot/plugins/jqplot.shapeRendererStroke.js"></script>
+    <script type="text/javascript" src="{% manager_media_prefix %}/js/jqplot/plugins/jqplot.markerRendererBorder.js"></script>
+    <script type="text/javascript">
+        wdays = ['Воскресение', 'Понедельник', 'Вторник','Среда','Четверг','Пятница','Суббота'];
+        months = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'];
+        function create_plot(data)
+        {
+            max_length = 50;
+            size_marker = (data.length > max_length) ? 7 : 11;
+            show = (data.length <= max_length);
+            options = {
+                axesDefaults: {
+                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+                },
+                axes: {
+                    xaxis: {
+                        pad: 0,
+                        renderer:$.jqplot.DateAxisRenderer,
+                        tickOptions:{
+                            formatString:'%b&nbsp;%d'
+                        }
+                    },
+                    yaxis: {
+                        label: "Посетители",
+                        tickOptions:{
+                            formatString:'%d'
+                        },
+                        min: 0
+                    }
+                },
+                seriesDefaults: {
+                    lineWidth: 4,
+                    color: '#0077cc',
+                    shadow: false,
+                    fill: true,
+                    fillAndStroke: true,
+                    fillColor: '#5bb3f2',
+                    fillAlpha: 0.10,
+                    markerRenderer: $.jqplot.MarkerRendererBorder,
+                    markerOptions: {
+                        shadow: false,
+                        lineWidth: 1,
+                        style: 'filledCircle',
+                        size: size_marker,
+                        show: show,
+                        color: '#0077cc',
+                        borderColor: '#ffffff'
+                    },
+                    rendererOptions: {
+                        highlightMouseOver: false,
+                        highlightMouseDown: false,
+                        highlightColor: null,
+                    }
+                },
+                highlighter: {
+                    show: true,
+                    showMarker: true,
+                    sizeAdjust: 4,
+                    yvalues: 2,
+                    tooltipFadeSpeed: 0,
+                    tooltipAxes: 'special',
+                    formatString: '<div>%s, %s</div><div>Посетителей: <b>%s</b></div><div>Просмотров: <b>%s</b></div>'
+                },
+                grid: {
+                    shadow: false
+                }
+            };
+            $('#statistics').empty();
+            var plot1 = $.jqplot('statistics', [data], options);
+        }
+        function get_days(json)
+        {
+            visitors = [];
+            page_views = [];
+            for(day in json.data){
+                dt = json.data[day].date;
+                y = parseInt(dt.substr(0, 4), 10);
+                m = parseInt(dt.substr(4, 2), 10) - 1;
+                d = parseInt(dt.substr(6, 2), 10);
+                str = new Date(y, m, d);
+
+                visitors.push([str, json.data[day].visitors, [wdays[str.getDay()], d + " " + months[m] + " " + y, json.data[day].visitors, json.data[day].page_views]]);
+                page_views.push([str, json.data[day].page_views]);
+            }
+            return visitors;
+        }
+        function draw(range)
+        {
+            $.getJSON('ya_api/'+range+'/',function(json){
+                if(json.errors){
+                    alert(json.errors[0].text+" ("+json.errors[0].code+") Статистика будет сгенерирована случайно.");
+                    fake = [];
+                    for(var i = 0; i < 8; i++){
+                        dt = (new Date());
+                        d = dt.getTime() + 86400000*i;
+                        v = Math.floor(Math.random()*1000);
+                        p = Math.floor(Math.random()*1000);
+                        fake.push([d, v, [wdays[dt.getDay()], dt.getDate() + " " + months[dt.getMonth()] + " " + dt.getFullYear(), v, p]]);
+                    }
+                    create_plot(fake);
+                }else{
+                    create_plot(get_days(json));
+                }
+            });
+        }
+        function range_click()
+        {
+            range = $(this).attr('rel');
+            $('.range_panel a.current').removeClass('current');
+            $(this).addClass('current');
+            draw(range);
+        }
+        $(document).ready(
+            function(){
+                $('.range_panel a').click(range_click);
+                draw('week');
+            }
+        );
+    </script>
+    <style type="text/css">
+        .range_panel
+        {
+            padding: 0  0 15px 0;
+        }
+        .range_panel a
+        {
+            text-decoration: none;
+            padding: 5px 10px;
+        }
+        .range_panel a span
+        {
+            border-bottom: 1px dashed #335D87;
+        }
+        .range_panel a.current
+        {
+            background: #EEE;
+        }
+    </style>
+{% endblock %}
+{% block navigate_panel %}<div class="navigate_panel"><a href="/admin/">Главная</a> &rarr; Статистика от Яндекса</div>{% endblock %}
+{% block form %}
+<div class="title_panel">Статистика от Яндекса</div>
+<p>Здесь вы можете ознакомиться со статистикой посещения сайта из <a href="http://metrika.yandex.ru/">Яндекс.Метрики</a>.</p>
+<div class="range_panel">
+    <a rel="week" class="week current" href="#week"><span>за неделю</span></a>
+    <a rel="month" class="month" href="#month"><span>за месяц</span></a>
+    <a rel="year" class="year" href="#year"><span>за год</span></a>
+</div>
+<div id="statistics"></div>
+
+{% endblock %}
