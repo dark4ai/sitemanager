@@ -74,24 +74,40 @@
                     formatString: '<div>%s, %s</div><div>Посетителей: <b>%s</b></div><div>Просмотров: <b>%s</b></div>'
                 },
                 grid: {
-                    shadow: false
+                    shadow: false,
+                    borderWidth: 0
                 }
             };
             $('#statistics').empty();
             var plot1 = $.jqplot('statistics', [data], options);
         }
+        function mparseDate(dt)
+        {
+            y = parseInt(dt.substr(0, 4), 10);
+            m = parseInt(dt.substr(4, 2), 10) - 1;
+            d = parseInt(dt.substr(6, 2), 10);
+            return new Date(y, m, d);
+        }
+        function date_format(dt)
+        {
+            return dt.getDate() + " " + months[dt.getMonth()] + " " + dt.getFullYear();
+        }
         function get_days(json)
         {
             visitors = [];
             page_views = [];
+            date1 = mparseDate(json.date1);
+            date2 = mparseDate(json.date2);
+            len = (date2 - date1)/86400000 + 1;
+            for(var i = 0; i < len - json.data.length; i++){
+                dt = new Date();
+                dt.setTime(date1.getTime() + i*86400000);
+                visitors.push([dt, 0, [wdays[dt.getDay()], date_format(dt), 0, 0]]);
+                page_views.push([dt, 0]);
+            }
             for(day in json.data){
-                dt = json.data[day].date;
-                y = parseInt(dt.substr(0, 4), 10);
-                m = parseInt(dt.substr(4, 2), 10) - 1;
-                d = parseInt(dt.substr(6, 2), 10);
-                str = new Date(y, m, d);
-
-                visitors.push([str, json.data[day].visitors, [wdays[str.getDay()], d + " " + months[m] + " " + y, json.data[day].visitors, json.data[day].page_views]]);
+                str = mparseDate(json.data[day].date);
+                visitors.push([str, json.data[day].visitors, [wdays[str.getDay()], date_format(str), json.data[day].visitors, json.data[day].page_views]]);
                 page_views.push([str, json.data[day].page_views]);
             }
             return visitors;
@@ -100,13 +116,12 @@
         {
             $.getJSON('ya_api/'+range+'/',function(json){
                 if(json.errors){
-                    alert(json.errors[0].text+" ("+json.errors[0].code+") Статистика будет сгенерирована случайно.");
+                    alert(json.errors[0].text+"("+json.errors[0].code+").");
                     fake = [];
-                    for(var i = 0; i < 8; i++){
+                    for(var i = 0; i < 7; i++){
                         dt = (new Date());
-                        d = dt.getTime() + 86400000*i;
-                        v = Math.floor(Math.random()*1000);
-                        p = Math.floor(Math.random()*1000);
+                        d = dt.getTime() - 86400000*i;
+                        v = p = 0;
                         fake.push([d, v, [wdays[dt.getDay()], dt.getDate() + " " + months[dt.getMonth()] + " " + dt.getFullYear(), v, p]]);
                     }
                     create_plot(fake);

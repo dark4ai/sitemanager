@@ -19,12 +19,12 @@ def statistics(request):
 
 def ya_api(request, range='week'):
     date2 = date.today()
-    date1 = date2 - timedelta(days=7)
+    date1 = date2 - timedelta(days=6)
     group = 'day'
     if range == 'month':
-        date1 = date2 - timedelta(days=30)
+        date1 = date2 - timedelta(days=29)
     if range == 'year':
-        date1 = date2 - timedelta(days=365)
+        date1 = date2 - timedelta(days=364)
         group = 'month'
     params = {
             'id': settings.STATISTICS_COUNTER_ID,

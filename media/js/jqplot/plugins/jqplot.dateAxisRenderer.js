@@ -335,15 +335,15 @@
             this.numberTicks = ret[2];
             this.tickInterval = ret[4];
             intervals = iv[0].intervals.length;
-            if(intervals == 7){
-                    this.numberTicks = 8;
+            if(intervals == 6){
+                    this.numberTicks = 7;
                     this.tickInterval = 86400000;
             }
-            if(intervals == 30){
+            if(intervals == 29){
                     this.numberTicks = 5;
                     this.tickInterval = 86400000*7;
             }
-            if(intervals > 30){
+            if(intervals > 29){
                     this.numberTicks = ret[2] - 1;
             }
             this.daTickInterval = [this.tickInterval/1000, 'seconds'];

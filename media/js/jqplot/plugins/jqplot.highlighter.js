@@ -393,7 +393,7 @@
                 s = plot.series[i];
                 if (s.renderer.constructor == $.jqplot.LineRenderer && s.show)
                 {
-                    neighbor = {seriesIndex: -1, pointIndex:-1, gridData:[], data:[]};
+                    neighbor = {seriesIndex: 0, pointIndex: 0, gridData:[], data:[]};
                     min_dist = plot._width;
                     for (var j=0; j<s.gridData.length; j++) {
                         p = s.gridData[j];
