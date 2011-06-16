@@ -9,6 +9,7 @@ from sitemanager.menus import current_menu
 from sitemanager.decorators import menu_decorator
 from sitemanager.shortcuts import sm_template
 from django.conf import settings
+from django.utils import simplejson
 from urllib2 import urlopen, URLError
 from urllib import urlencode
 from datetime import timedelta, date
@@ -35,5 +36,10 @@ def ya_api(request, range='week'):
     try:
         json = urlopen("http://api-metrika.yandex.ru/stat/traffic/summary.json?%s" % urlencode(params))
     except URLError:
-        json =  {"errors": [{"text": u"К сожалению metrika.yandex.ru не отвечает", "code": u"ERR_TIMEOUT"}]};
+        json = {"errors": [{
+                            "text": u"К сожалению metrika.yandex.ru не отвечает",
+                            "code": u"ERR_TIMEOUT"
+                            }]};
+        result = simplejson.dumps(json, ensure_ascii=False)
+        return HttpResponse(result, mimetype='application/json')
     return HttpResponse(json.read(), mimetype='application/json')
