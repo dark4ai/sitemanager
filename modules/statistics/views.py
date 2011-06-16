@@ -35,5 +35,5 @@ def ya_api(request, range='week'):
     try:
         json = urlopen("http://api-metrika.yandex.ru/stat/traffic/summary.json?%s" % urlencode(params))
     except URLError:
-        json =  {"errors": [{"text": u"К сожалению metrika.yandex.ru не отвечает", "code": u"ERR_TIMEOUT"]};
+        json =  {"errors": [{"text": u"К сожалению metrika.yandex.ru не отвечает", "code": u"ERR_TIMEOUT"}]};
     return HttpResponse(json.read(), mimetype='application/json')
