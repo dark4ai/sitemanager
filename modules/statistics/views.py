@@ -9,14 +9,14 @@ from sitemanager.menus import current_menu
 from sitemanager.decorators import menu_decorator
 from sitemanager.shortcuts import sm_template
 from django.conf import settings
-from urllib2 import urlopen
+from urllib2 import urlopen, URLError
 from urllib import urlencode
 from datetime import timedelta, date
 
 @menu_decorator('statistics')
 def statistics(request):
     return sm_template(request,'cms/modules/statistics/index.html', locals())
-
+URLError
 def ya_api(request, range='week'):
     date2 = date.today()
     date1 = date2 - timedelta(days=6)
@@ -32,5 +32,8 @@ def ya_api(request, range='week'):
             'date1': date1.strftime('%Y%m%d'),
             'date2': date2.strftime('%Y%m%d'),
     }
-    json = urlopen("http://api-metrika.yandex.ru/stat/traffic/summary.json?%s" % urlencode(params))
+    try:
+        json = urlopen("http://api-metrika.yandex.ru/stat/traffic/summary.json?%s" % urlencode(params))
+    except URLError:
+        json =  {"errors": [{"text": u"К сожалению metrika.yandex.ru не отвечает", "code": u"ERR_TIMEOUT"]};
     return HttpResponse(json.read(), mimetype='application/json')
