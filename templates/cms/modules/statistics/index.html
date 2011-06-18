@@ -99,16 +99,17 @@
             date1 = mparseDate(json.date1);
             date2 = mparseDate(json.date2);
             len = (date2 - date1)/86400000 + 1;
-            for(var i = 0; i < len - json.data.length; i++){
+            for(var i = 0; i < len; i++){
                 dt = new Date();
-                dt.setTime(date1.getTime() + i*86400000);
+                dt.setTime(date1.getTime() + i*86400000)
                 visitors.push([dt, 0, [wdays[dt.getDay()], date_format(dt), 0, 0]]);
                 page_views.push([dt, 0]);
             }
             for(day in json.data){
                 str = mparseDate(json.data[day].date);
-                visitors.push([str, json.data[day].visitors, [wdays[str.getDay()], date_format(str), json.data[day].visitors, json.data[day].page_views]]);
-                page_views.push([str, json.data[day].page_views]);
+                i = (str - date1 )/86400000;
+                visitors[i][1] = visitors[i][2][2] = json.data[day].visitors;
+                visitors[i][2][3] = page_views[i][1] = json.data[day].page_views;
             }
             return visitors;
         }
